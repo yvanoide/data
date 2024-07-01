@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'accueil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <h1 class="display-4">Page d'accueil</h1>
+            <p class="lead">Bienvenue sur notre site.</p>
+            <!-- Barre de recherche -->
+            <form action="{% url 'index' %}" method="GET" class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="q" placeholder="Rechercher le fichier par nom...">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+            <!-- Fin de la barre de recherche -->
+            <hr class="my-4">
+            <h2>Fichiers stockés</h2>
+            {% if query %}
+                <h3>Résultats trouvés pour "{{ query }}" :</h3>
+            {% endif %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nom de fichier</th>
+                        <th>Date de téléchargement</th>
+                        <th>Taille</th>
+                        <th>Type de contenu</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files_data %}
+                        <tr>
+                            <td>{{ file.filename }}</td>
+                            <td>{{ file.uploadDate }}</td>
+                            <td>{{ file.length }} octets</td>
+                            <td>{{ file.contentType }}</td>
+                            <td><a href="{% url 'download_file' file.id %}" class="btn btn-primary">Télécharger</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
