@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfert de Texte</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Transfert de Texte</h1>
+        <form method="POST" action="{% url 'transfert_texte' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="theme">Thème:</label>
+                <input type="text" class="form-control" id="theme" name="theme" required>
+            </div>
+            <div class="form-group">
+                <label for="colonnes">Texte:</label>
+                <textarea class="form-control" id="colonnes" name="colonnes" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Transférer Texte</button>
+        </form>
+    </div>
+</body>
+</html>

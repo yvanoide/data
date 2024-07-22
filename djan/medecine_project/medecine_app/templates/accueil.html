@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Annuaire</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .toggle-content {
+            display: none; /* Masquer par défaut */
+        }
+        .toggle-btn {
+            cursor: pointer; /* Définir le curseur en pointeur pour le bouton de toggle */
+        }
+        .toggle-btn:hover {
+            cursor: pointer; /* Au survol du bouton, le curseur devient une main */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Bienvenue sur PY</h1>
+        <p>Vous pouvez accéder aux bases de données ci-dessous :</p>
+
+        <!-- Section pour les vidéos -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>
+                    <span class="toggle-btn" id="video_list_toggle" onclick="toggleContent('video_list', 'video_list_toggle')">▶️</span>
+                    <span class="toggle-title">Liste des Vidéos</span>
+                </h2>
+
+                <!-- Barre de recherche pour vidéos (déjà présente) -->
+                <form class="mt-3 mb-3" method="GET" action="{% url 'video_list' %}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Rechercher par titre..." aria-label="Rechercher par titre" name="search_query" value="{{ search_query }}">
+                        <button type="submit" class="btn btn-outline-secondary">Rechercher</button>
+                    </div>
+                </form>
+
+                <!-- Liste des vidéos -->
+                <ul id="video_list" class="list-group toggle-content">
+                    {% for video in videos %}
+                    <li class="list-group-item">
+                        <div class="mb-3">
+                            <h5 class="card-title"><strong>Nom:</strong> {{ video.filename }}</h5>
+                            <p class="card-text"><strong>Date:</strong> {{ video.upload_date }}</p>
+                            <p class="card-text"><strong>Taille:</strong> {{ video.length }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'download_video' video.id %}" class="btn btn-primary btn-sm">Télécharger</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">Aucune vidéo trouvée.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+ 
+
+<!-- Section pour les collections CSV -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2 class="toggle-title">
+            <span class="toggle-btn" id="collections_toggle" onclick="toggleContent('collections', 'collections_toggle')">▶️</span>
+            Liste des Csv
+        </h2>
+        <ul id="collections" class="list-group toggle-content">
+            {% for collection_name in collections %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ collection_name }}
+                    <div>
+                        <a href="{% url 'download_collection' collection_name %}" class="btn btn-primary btn-sm">Télécharger</a>
+                        <!--
+                        <form action="{% url 'delete_dataset' collection_name %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer ce dataset ?');">Supprimer</button>
+                        </form>
+                        -->
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Aucune collection trouvée.</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Barre de recherche pour CSV -->
+        <form method="get" action="" class="form-group my-3 d-flex">
+            <input type="text" name="q_csv" class="form-control flex-grow-1" placeholder="Rechercher une collection" aria-label="Rechercher" value="{{ query_csv }}">
+            <button class="btn btn-outline-success" type="submit">Rechercher</button>
+        </form>
+        
+
+        <!-- Affichage des résultats de la recherche par ID -->
+        {% if csv_context %}
+            <div class="mt-3">
+                <h3>Collection trouvée : {{ csv_context.collection_name }}</h3>
+                <p>Document correspondant :</p>
+                <pre>{{ csv_context.document }}</pre>
+            </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>
+       <!-- Section pour les collections JSON -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>
+                    <span class="toggle-btn" id="json_list_toggle" onclick="toggleContent('json_list', 'json_list_toggle')">▶️</span>
+                    <span class="toggle-title">Collections JSON</span>
+                </h2>
+
+                <!-- Barre de recherche pour collections JSON (déjà présente) -->
+                <form class="mt-3 mb-3" method="GET" action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Rechercher par titre..." aria-label="Rechercher par titre" name="q_json" value="{{ query_json }}">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-outline-secondary">Rechercher</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Liste des collections JSON -->
+                <ul id="json_list" class="list-group toggle-content">
+                    {% for collection_name in collections_json %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ collection_name }}
+                            <div>
+                                <a href="{% url 'download_json' collection_name %}" class="btn btn-primary btn-sm">Télécharger</a>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Aucune collection trouvée.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section pour les blocs texte avec recherche par thème et par ID -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2>
+            <span class="toggle-btn" id="blocs_texte_toggle" onclick="toggleContent('blocs_texte', 'blocs_texte_toggle')">▶️</span>
+            <span class="toggle-title">Blocs de Texte</span>
+        </h2>
+
+        <!-- Barre de recherche par thème -->
+<div class="form-group">
+    <label for="search_theme">Rechercher par thème:</label>
+    <form method="GET" action="">
+        <div class="input-group">
+            <input type="text" id="search_theme" class="form-control" placeholder="Rechercher par thème..." aria-label="Rechercher par thème" name="q_texte" value="{{ query_texte }}">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-secondary">Rechercher</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+        <!-- Barre de recherche par ID -->
+        <div class="form-group mt-3">
+            <label for="search_id">Rechercher par ID:</label>
+            <form method="GET" action="">
+                <div class="input-group">
+                    <input type="text" id="search_id" class="form-control" placeholder="Rechercher par ID..." aria-label="Rechercher par ID" name="q_id" value="{{ query_id }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Liste des blocs de texte -->
+        <div id="blocs_texte" class="toggle-content mt-3">
+            <ul class="list-group" id="blocs_texte_list">
+                {% for bloc in blocs_texte %}
+                    <li class="list-group-item">
+                        <div class="mb-3">
+                            <h5 class="card-title"><strong>Thème:</strong> {{ bloc.theme }}</h5>
+                            <p class="card-text"><strong>Colonnes:</strong></p>
+                            <p class="card-text">{{ bloc.colonnes }}</p>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">Aucun bloc texte trouvé.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+
+            <!-- Section pour les fichiers stockés -->
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <!-- Supprimer la classe jumbotron pour enlever le fond gris -->
+                    <div>
+                        <h2>
+                            <span class="toggle-btn" id="files_section_toggle" onclick="toggleContent('files_section', 'files_section_toggle')">▶️</span>
+                            <span class="toggle-title">Dossier de base d'image</span>
+                        </h2>
+                        <div id="files_section" class="toggle-content">
+                            {% if query %}
+                                <h3>Résultats trouvés pour "{{ query }}" :</h3>
+                            {% endif %}
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nom de fichier</th>
+                                        <th>Date de téléchargement</th>
+                                        <th>Taille</th>
+                                        <th>Type de contenu</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for file in files_data %}
+                                        <tr>
+                                            <td>{{ file.filename }}</td>
+                                            <td>{{ file.uploadDate }}</td>
+                                            <td>{{ file.length }} octets</td>
+                                            <td>{{ file.contentType }}</td>
+                                            <td><a href="{% url 'download_file' file.id %}" class="btn btn-primary">Télécharger</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+            <!-- Barre de recherche -->
+<form action="{% url 'index' %}" method="GET" class="mb-3">
+<div class="input-group">
+    <input type="text" class="form-control" name="q" placeholder="Rechercher le fichier par nom...">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Rechercher</button>
+    </div>
+</div>
+                <!-- Barre de recherche par ID -->
+                <div class="form-group mt-3">
+                    <form method="GET" action="">
+                        <label for="search_id">Rechercher par ID:</label>
+                        <div class="input-group">
+                            <input type="text" id="search_id" class="form-control" placeholder="Rechercher par ID..." aria-label="Rechercher par ID" name="q_id" value="{{ query_id }}">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-secondary">Rechercher</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+        <!-- Section pour les transferts -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2>
+                    <span class="toggle-btn" id="transferts_toggle" onclick="toggleContent('transferts', 'transferts_toggle')">▶️</span>
+                    <span class="toggle-title">Transferts de fichiers</span>
+                </h2>
+                <div id="transferts" class="toggle-content">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'upload_images' %}" class="btn btn-info btn-block">Transférer Images</a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button onclick="window.location.href='{% url 'upload_csv' dataset_name='nom_du_dataset' %}'" class="btn btn-primary btn-block">Transférer CSV</button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'upload_json' %}" class="btn btn-success btn-block">Transférer JSON</a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button onclick="window.location.href='{% url 'upload_videos' %}'" class="btn btn-warning btn-block">Transférer Vidéos</button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button onclick="window.location.href='{% url 'transfert_texte' %}'" class="btn btn-danger btn-block">Transférer Texte</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5">
+
+    
+                        
+
+            </form>
+        <html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'accueil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>  
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+                     
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Fonction pour basculer l'affichage du contenu
+        function toggleContent(contentId, toggleId) {
+            var element = document.getElementById(contentId);
+            var btn = document.getElementById(toggleId);
+    
+            // Toggle du contenu
+            if (element.style.display === "none" || element.style.display === "") {
+                element.style.display = "block";
+                btn.textContent = "▼"; // Changement de l'icône du bouton pour indiquer l'état ouvert
+            } else {
+                element.style.display = "none";
+                btn.textContent = "▶️"; // Changement de l'icône du bouton pour indiquer l'état fermé
+            }
+        }
+    
+        // Masquer toutes les sections au chargement initial de la page
+        document.addEventListener("DOMContentLoaded", function() {
+            var toggleElements = document.querySelectorAll(".toggle-content");
+            for (var i = 0; i < toggleElements.length; i++) {
+                toggleElements[i].style.display = "none";
+            }
+        });
+    </script>
+    
+</body>
+</html>
