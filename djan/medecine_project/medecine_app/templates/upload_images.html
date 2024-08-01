@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploader ZIP</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Uploader ZIP</h1>
+        <form action="{% url 'upload_zip' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="zip_file">Sélectionnez un fichier ZIP :</label>
+                <input type="file" name="zip_file" id="zip_file" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Uploader</button>
+        </form>
+    </div>
+</body>
+</html>

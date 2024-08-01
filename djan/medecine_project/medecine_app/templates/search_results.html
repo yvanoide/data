@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de la recherche</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Résultats de la recherche pour "{{ query }}"</h1>
+        
+        <!-- Afficher les résultats de la recherche pour les vidéos -->
+        <h2>Vidéos</h2>
+        <ul class="list-group">
+            {% for video in videos %}
+            <li class="list-group-item">{{ video.filename }}</li>
+            {% empty %}
+            <li class="list-group-item">Aucune vidéo trouvée.</li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Afficher les résultats de la recherche pour les images -->
+        <h2>Images</h2>
+        <ul class="list-group">
+            {% for image in images %}
+            <li class="list-group-item">{{ image.filename }}</li>
+            {% empty %}
+            <li class="list-group-item">Aucune image trouvée.</li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Afficher les résultats de la recherche pour les collections CSV -->
+        <h2>Collections CSV</h2>
+        <ul class="list-group">
+            {% for collection in csv_collections %}
+            <li class="list-group-item">{{ collection }}</li>
+            {% empty %}
+            <li class="list-group-item">Aucune collection CSV trouvée.</li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Afficher les résultats de la recherche pour les collections JSON -->
+        <h2>Collections JSON</h2>
+        <ul class="list-group">
+            {% for collection in json_collections %}
+            <li class="list-group-item">{{ collection }}</li>
+            {% empty %}
+            <li class="list-group-item">Aucune collection JSON trouvée.</li>
+            {% endfor %}
+        </ul>
+        
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
