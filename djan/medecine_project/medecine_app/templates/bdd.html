@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Collections</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Liste des Collections</h1>
+
+        <!-- Barre de recherche -->
+        <form method="get" action="{% url 'bdd' %}" class="form-inline my-3">
+            <input type="text" name="q" class="form-control mr-sm-2" placeholder="Rechercher une collection" aria-label="Rechercher">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+        </form>
+
+        <ul class="list-group mt-3">
+            {% for collection_name in collections %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ collection_name }}
+                    <div>
+                        <a href="{% url 'download_collection' collection_name %}" class="btn btn-primary btn-sm">Télécharger</a>
+                        <form action="{% url 'delete_dataset' collection_name %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer ce dataset ?');">Supprimer</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transférer JSON</title>
+    <!-- Inclure Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Transférer un fichier JSON</h2>
+        <form method="post" enctype="multipart/form-data" class="mt-3">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="jsonFile">Sélectionner un fichier JSON</label>
+                <input type="file" class="form-control-file" id="jsonFile" name="json_file" accept=".json" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Transférer</button>
+        </form>
+    </div>
+    <!-- Inclure Bootstrap JS (optionnel) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

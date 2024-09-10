@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de la recherche</title>
+    <!-- Ajouter le CSS Bootstrap depuis un CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Résultats de la recherche pour "<strong>{{ query }}</strong>"</h1>
+
+        {% if collections %}
+            <div class="list-group">
+                {% for collection in collections %}
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ collection }}</span>
+                            <a href="{% url 'download_data' collection 'csv' %}" class="btn btn-primary btn-sm">Télécharger</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                Aucune collection trouvée pour le mot-clé "<strong>{{ query }}</strong>".
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Ajouter les scripts Bootstrap depuis un CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

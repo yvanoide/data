@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Texte</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <h1 class="display-4">Date </h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>School</th>
+                        <th>Sex</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Famsize</th>
+                        <th>Pstatus</th>
+                        <th>Medu</th>
+                        <th>Fedu</th>
+                        <th>Mjob</th>
+                        <th>Fjob</th>
+                        <th>Reason</th>
+                        <th>Guardian</th>
+                        <th>Traveltime</th>
+                        <th>Studytime</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in data %}
+                    <tr>
+                        <td>{{ record.id }}</td>
+                        <td>{{ record.school }}</td>
+                        <td>{{ record.sex }}</td>
+                        <td>{{ record.age }}</td>
+                        <td>{{ record.address }}</td>
+                        <td>{{ record.famsize }}</td>
+                        <td>{{ record.Pstatus }}</td>
+                        <td>{{ record.Medu }}</td>
+                        <td>{{ record.Fedu }}</td>
+                        <td>{{ record.Mjob }}</td>
+                        <td>{{ record.Fjob }}</td>
+                        <td>{{ record.reason }}</td>
+                        <td>{{ record.guardian }}</td>
+                        <td>{{ record.traveltime }}</td>
+                        <td>{{ record.studytime }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

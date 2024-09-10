@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    <!-- Section Upload -->
+    <h2>Upload</h2>
+    <form action="{% url 'upload_zip' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="zip_file" required>
+        <button type="submit">Upload ZIP</button>
+    </form>
+    <br>
+    <form action="{% url 'upload_csv' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="csv_file" required>
+        <button type="submit">Upload CSV</button>
+    </form>
+    <br>
+    <form action="{% url 'upload_json' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="json_file" required>
+        <button type="submit">Upload JSON</button>
+    </form>
+    <br>
+    <form action="{% url 'upload_image_folder' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image_folder" multiple required>
+        <button type="submit">Upload Images</button>
+    </form>
+    <br>
+    <form action="{% url 'upload_videos' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="video_files" multiple required>
+        <button type="submit">Upload Videos</button>
+    </form>
+
+    <!-- Section Download -->
+    <h2>Download</h2>
+    <p><a href="{% url 'download_images' %}">Download Images</a></p>
+    <p><a href="{% url 'download_faces' %}">Download Faces</a></p>
+    <p><a href="{% url 'download_torax' %}">Download Torax</a></p>
+    <!-- Add more download links as needed -->
+
+    <!-- Section Text -->
+    <h2>Text</h2>
+    <p><a href="{% url 'texte' %}">Text</a></p>
+    <p><a href="{% url 'date_texte' %}">Date Text</a></p>
+    <!-- Add more text-related links as needed -->
+
+    <!-- Section BDD -->
+    <h2>BDD</h2>
+    <p><a href="{% url 'bdd' %}">BDD</a></p>
+    <!-- Add more database-related links as needed -->
+
+    <!-- Section JSON -->
+    <h2>JSON</h2>
+    <p><a href="{% url 'json_datasets' %}">JSON Datasets</a></p>
+    <!-- Add more JSON-related links as needed -->
+
+    <!-- Section Video -->
+    <h2>Video</h2>
+    <p><a href="{% url 'video_list' %}">List Videos</a></p>
+    <!-- Add more video-related links as needed -->
+
+</body>
+</html>
