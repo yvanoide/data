@@ -1,12 +1,28 @@
-version: "3.8"
+version: '3.8'
 
 services:
+  mon_django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mon_django
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin  # Nom d'utilisateur MongoDB
+      - MONGO_INITDB_ROOT_PASSWORD=admin123  # Mot de passe MongoDB
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+    restart: unless-stopped
+
   mongodb:
-    image: mongo
+    image: mongo:7.0.0
     container_name: mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=pass12345
+      - MONGO_INITDB_ROOT_USERNAME=admin  # Nom d'utilisateur MongoDB
+      - MONGO_INITDB_ROOT_PASSWORD=admin123  # Mot de passe MongoDB
     volumes:
       - mongodb-data:/data/db
     networks:
@@ -14,7 +30,7 @@ services:
     ports:
       - 27017:27017
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongodb:27017/admin --quiet
+      test: ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongo --quiet mongodb/test"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -26,10 +42,10 @@ services:
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass12345
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin  # Nom d'utilisateur MongoDB
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin123  # Mot de passe MongoDB
+      - ME_CONFIG_BASICAUTH_USERNAME=admin  # Nom d'utilisateur pour Mongo Express
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123  # Mot de passe pour Mongo Express
     depends_on:
       - mongodb
     networks:
@@ -37,7 +53,7 @@ services:
     ports:
       - 8081:8081
     healthcheck:
-      test: wget --quiet --tries=3 --spider http://admin:admin123@mongo-express:8081 || exit 1
+      test: ["CMD", "wget", "--quiet", "--spider", "--tries=3", "http://admin:admin123@mongo-express:8081"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -45,8 +61,6 @@ services:
 
 volumes:
   mongodb-data:
-    name: mongodb-data
 
 networks:
   mongodb_network:
-    name: mongodb_network
