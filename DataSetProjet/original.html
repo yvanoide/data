@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Chatbot</title>
+    <!-- Lien vers Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-custom {
+            background-color: #343a40;
+        }
+        .navbar-custom .navbar-brand, .navbar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .empty {
+            text-align: center;
+            color: #6c757d;
+        }
+        .list-group-item {
+            border-radius: 0.25rem;
+            border: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+        .dataset-info h2 {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- En-tête -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="#">Chatbot</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'home' %}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'chatbot' %}">Créer un Dataset</a>
+                </li>
+                <!-- Ajoutez d'autres liens ici si nécessaire -->
+            </ul>
+        </div>
+    </nav>
+
+   
+
+    <!-- Section des datasets -->
+    <div class="container mt-5">
+        <form method="GET" action="{% url 'list_datasets' %}" class="form-inline justify-content-center mb-4">
+            <input class="form-control mr-sm-2" type="search" placeholder="Rechercher" aria-label="Search" name="q" value="{{ query }}">
+            <select class="form-control mr-sm-2" name="file_type">
+                <option value="">Tous les types</option>
+                <option value="csv" {% if file_type == 'csv' %}selected{% endif %}>CSV</option>
+                <option value="json" {% if file_type == 'json' %}selected{% endif %}>JSON</option>
+                <option value="jpg" {% if file_type == 'jpg' %}selected{% endif %}>JPG</option>
+                <option value="png" {% if file_type == 'png' %}selected{% endif %}>PNG</option>
+            </select>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+        </form>
+
+        <!-- Boutons de filtrage par type de dataset -->
+        <div class="btn-group btn-group-toggle mb-4" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input type="radio" name="dataset_type" id="text" value="text" checked autocomplete="off" onclick="toggleVisibility('text');"> Datasets de Texte
+            </label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="dataset_type" id="images" value="images" autocomplete="off" onclick="toggleVisibility('images');"> Datasets d'Images
+            </label>
+        </div>
+
+        <!-- Lien vers create_database.html -->
+        <div class="text-center mb-4">
+            <a href="{% url 'chatbot' %}" class="btn btn-primary">Créer une base de données</a>
+        </div>
+
+        <!-- Section des datasets de texte -->
+<div class="row justify-content-center">
+    <div class="col-md-8" id="text_section">
+        <ul class="list-group">
+            {% for item in datasets %}
+            <li class="list-group-item mb-4 p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="dataset-info">
+                        <h2>{{ item.metadata.titre }}</h2>
+                        <button class="btn btn-info btn-sm mt-2" onclick="toggleInfo('text-info-{{ forloop.counter }}')">Plus d'infos</button>
+                        <div id="text-info-{{ forloop.counter }}" class="mt-3 card" style="display: none;">
+                            <div class="card-body">
+                                <p><strong>Description:</strong> {{ item.metadata.description }}</p>
+                                <p><strong>Type de fichier:</strong> {{ item.metadata.fichier_type }}</p>
+                                <p><strong>Chargé par:</strong> {{ item.metadata.Auteur }}</p>
+                                <p><strong>Chargé le:</strong> {{ item.metadata.HeureChargement }}</p>
+                                <p><strong>Taille du fichier:</strong> 
+                                    {% if item.metadata.file_size %}
+                                        {{ item.metadata.file_size|floatformat:2 }} KB
+                                    {% else %}
+                                        Inconnue
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dataset-actions ml-3">
+                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm mt-2" onclick="toggleSample('sample-{{ forloop.counter }}')">Aperçu</a>
+                        <div id="sample-{{ forloop.counter }}" class="mt-3 card" style="display: none;">
+                            <div class="card-body">
+                                <pre>
+                                    {% for sample in item.sample %}
+                                        {{ sample }}
+                                    {% endfor %}
+                                </pre>
+                            </div>
+                        </div>
+                        <a href="{% url 'download_data' collection_name=item.metadata.formatted_titre fichier_type=item.metadata.fichier_type %}" class="btn btn-outline-success btn-sm mt-2">Télécharger</a>
+                        {% if is_professor %}
+                            <form method="POST" action="{% url 'delete_dataset' dataset_id=item.metadata.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dataset ?')">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item empty">Aucun dataset de texte disponible.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+            <!-- Section des datasets d'images -->
+            <div class="col-md-8" id="images_section" style="display:none;">
+                <ul class="list-group">
+                    {% for image_folder_metadata in image_folder_metadata_list %}
+                    <li class="list-group-item mb-4 p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="dataset-info">
+                                <h2>{{ image_folder_metadata.folder_name }}</h2>
+                                <button class="btn btn-info btn-sm mt-2" onclick="toggleInfo('image-info-{{ forloop.counter }}')">Plus d'infos</button>
+                                <div id="image-info-{{ forloop.counter }}" class="mt-3 card" style="display: none;">
+                                    <div class="card-body">
+                                        <p><strong>Description:</strong> {{ image_folder_metadata.description }}</p>
+                                        <p><strong>Type de fichier:</strong> {{ image_folder_metadata.fichier_type }}</p>
+                                        <p><strong>Chargé par:</strong> {{ image_folder_metadata.Auteur.username }}</p>
+                                        <p><strong>Chargé le:</strong> {{ image_folder_metadata.HeureChargement }}</p>
+                                        <p><strong>Taille du fichier:</strong> 
+                                            {% if image_folder_metadata.file_size %}
+                                                {{ image_folder_metadata.file_size|floatformat:2 }} KB
+                                            {% else %}
+                                                Inconnue
+                                            {% endif %}
+                                        </p>                            
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dataset-actions ml-3">
+                                <a href="{% url 'download_all_images' image_collection_name=image_folder_metadata.folder_name %}" class="btn btn-outline-success btn-sm mt-2">Télécharger</a>
+                                {% if is_professor %}
+                                    <form method="POST" action="{% url 'delete_image_folder' folder_name=image_folder_metadata.folder_name %}" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce dossier ?')">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-sm mt-2">Supprimer</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item empty">Aucune image disponible.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Datasets</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="mt-5">Datasets de Texte</h1>
+            <div class="list-group">
+                {% for collection_name in text_collections %}
+                    <a href="{% url 'download_data' collection_name=collection_name %}" class="list-group-item list-group-item-action">
+                        {{ collection_name }}
+                    </a>
+                {% empty %}
+                    <p>Aucun dataset de texte disponible.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+    </html>
+    
+    <!-- Bootstrap JS et jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function toggleVisibility(type) {
+            document.getElementById('text_section').style.display = type === 'text' ? 'block' : 'none';
+            document.getElementById('images_section').style.display = type === 'images' ? 'block' : 'none';
+        }
+
+        function toggleInfo(id) {
+            var element = document.getElementById(id);
+            element.style.display = element.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function toggleSample(id) {
+            var element = document.getElementById(id);
+            element.style.display = element.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

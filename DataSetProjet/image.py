@@ -1,18 +1,14 @@
-import os
-import gridfs
-from pymongo import MongoClient
+from diffusers import StableDiffusionPipeline
+import torch
 
-# Connexion à la base de données MongoDB
-client = MongoClient('mongodb://root:pass12345@localhost:27017/')
-db = client['photosquelette']
-fs = gridfs.GridFS(db)
+# Charger le modèle
+model_name = "CompVis/stable-diffusion-v1-4"
+pipe = StableDiffusionPipeline.from_pretrained(model_name, torch_dtype=torch.float16)
+pipe.to("cuda")
 
-# Chemin vers le répertoire contenant les images
-directory = '/home/yvanoide/iadev-python/ProjetDatasets - Copie/images'
+# Générer une image
+prompt = "Une belle forêt en automne"
+image = pipe(prompt).images[0]
 
-# Importer chaque image dans GridFS
-for filename in os.listdir(directory):
-    if filename.endswith(('.jpg', '.jpeg', '.png', '.gif')):  # Ajoutez les extensions d'image que vous souhaitez prendre en charge
-        filepath = os.path.join(directory, filename)
-        with open(filepath, 'rb') as f:
-            fs.put(f, filename=filename)
+# Sauvegarder l'image
+image.save("generated_image.png")

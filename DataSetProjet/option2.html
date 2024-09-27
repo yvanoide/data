@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Chatbot</title>
+    <!-- Lien vers Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-custom {
+            background-color: #343a40;
+        }
+        .navbar-custom .navbar-brand, .navbar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+        .empty {
+            text-align: center;
+            color: #6c757d;
+        }
+        .list-group-item {
+            border-radius: 0.25rem;
+            border: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+        .dataset-info h2 {
+            margin-bottom: 0.5rem;
+        }
+        .dataset-actions a, .dataset-actions button {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- En-tête -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="#">Chatbot</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'home' %}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'chatbot' %}">Créer un Dataset</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Section des datasets de texte -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8" id="text_section">
+                <ul class="list-group">
+                    {% for collection_name in text_collections %}
+                        <li class="list-group-item mb-4 p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="dataset-info">
+                                    <h2>{{ collection_name }}</h2>
+                                    <button class="btn btn-info btn-sm mt-2" onclick="toggleInfo('text-info-{{ forloop.counter }}')">Plus d'infos</button>
+                                    <div id="text-info-{{ forloop.counter }}" class="mt-3 card" style="display: none;">
+                                        <div class="card-body">
+                                            <p><strong>Description:</strong> {{ item.metadata.description }}</p>
+                                            <p><strong>Type de fichier:</strong> {{ item.metadata.fichier_type }}</p>
+                                            <p><strong>Chargé par:</strong> {{ item.metadata.Auteur }}</p>
+                                            <p><strong>Chargé le:</strong> {{ item.metadata.HeureChargement }}</p>
+                                            <p><strong>Taille du fichier:</strong> 
+                                                {% if item.metadata.file_size %}
+                                                    {{ item.metadata.file_size|floatformat:2 }} KB
+                                                {% else %}
+                                                    Inconnue
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dataset-actions ml-3">
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm mt-2" onclick="toggleSample('sample-{{ forloop.counter }}')">Aperçu</a>
+                                    <div id="sample-{{ forloop.counter }}" class="mt-3 card" style="display: none;">
+                                        <div class="card-body">
+                                            <pre>
+                                                {% for sample in item.sample %}
+                                                    {{ sample }}
+                                                {% endfor %}
+                                            </pre>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'download_data' collection_name=collection_name %}" class="btn btn-outline-success btn-sm mt-2">Télécharger</a>
+                                    {% if is_professor %}
+                                        <form method="POST" action="{% url 'delete_dataset' dataset_id=item.metadata.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dataset ?')">Supprimer</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item empty">Aucun dataset de texte disponible.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section du chatbot -->
+        <div class="container mt-5">
+            <h2 class="text-center">Chatbot</h2>
+            <p class="text-center">Posez une question ou discutez avec notre chatbot IA.</p>
+            <div class="text-center">
+                <a href="{% url 'chatbot' %}" class="btn btn-primary">Lancer le Chatbot</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script pour le fonctionnement des boutons et sections -->
+    <script>
+        function toggleInfo(infoId) {
+            var infoElement = document.getElementById(infoId);
+            infoElement.style.display = (infoElement.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function toggleSample(sampleId) {
+            var sampleElement = document.getElementById(sampleId);
+            sampleElement.style.display = (sampleElement.style.display === 'none') ? 'block' : 'none';
+        }
+    </script>
+
+    <!-- Scripts Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
