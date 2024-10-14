@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de Recherche</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Résultats de la recherche pour "{{ request.GET.query }}"</h1>
+
+        {% if images %}
+            <div class="row">
+                {% for image in images %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="{{ image.url }}" class="card-img-top" alt="Image de Pexels">
+                            <div class="card-body">
+                                <p class="card-text">Photo de <a href="{{ image.photographer_url }}">{{ image.photographer }}</a> sur Pexels</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Aucune image trouvée pour la requête "{{ request.GET.query }}"</p>
+        {% endif %}
+        
+        <!-- Lien vers Pexels -->
+        <footer class="mt-4">
+            <p>Photos fournies par <a href="https://www.pexels.com">Pexels</a></p>
+            <p><a href="https://www.pexels.com"><img src="https://images.pexels.com/lib/api/pexels.png" alt="Logo Pexels"></a></p>
+        </footer>
+    </div>
+</body>
+</html>

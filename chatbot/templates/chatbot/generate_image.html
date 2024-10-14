@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur d'Images</title>
+    <!-- Ajouter le CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Générer une Image</h1>
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="prompt">Description de l'image :</label>
+                <input type="text" id="prompt" name="prompt" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Générer</button>
+        </form>
+
+        {% if image_url %}
+            <h2 class="mt-5">Image générée :</h2>
+            <img src="{{ image_url }}" alt="Image générée" class="img-fluid mt-3">
+        {% endif %}
+    </div>
+
+    <!-- Ajouter le JS de Bootstrap (optionnel) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
